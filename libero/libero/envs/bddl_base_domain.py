@@ -3,7 +3,7 @@ import os
 import robosuite.utils.transform_utils as T
 
 from copy import deepcopy
-from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
+from robosuite.environments.manipulation.manipulation_env import ManipulationEnv
 from robosuite.models.tasks import ManipulationTask
 from robosuite.utils.placement_samplers import SequentialCompositeSampler
 from robosuite.utils.observables import Observable, sensor
@@ -34,7 +34,7 @@ def register_problem(target_class):
 import time
 
 
-class BDDLBaseDomain(SingleArmEnv):
+class BDDLBaseDomain(ManipulationEnv):
     """
     A base domain for parsing bddl files.
     """
@@ -131,12 +131,11 @@ class BDDLBaseDomain(SingleArmEnv):
         self._arena_type = arena_type
         self._arena_xml = os.path.join(self.custom_asset_dir, scene_xml)
         self._arena_properties = scene_properties
-
         super().__init__(
             robots=robots,
             env_configuration=env_configuration,
             controller_configs=controller_configs,
-            mount_types="default",
+            base_types="default",
             gripper_types=gripper_types,
             initialization_noise=initialization_noise,
             use_camera_obs=use_camera_obs,
@@ -159,7 +158,7 @@ class BDDLBaseDomain(SingleArmEnv):
             **kwargs,
         )
 
-    def seed(self, seed):
+    def set_seed(self, seed):
         np.random.seed(seed)
 
     def reward(self, action=None):

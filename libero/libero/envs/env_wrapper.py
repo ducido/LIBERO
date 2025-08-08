@@ -44,7 +44,7 @@ class ControlEnv:
             bddl_file_name
         ), f"[error] {bddl_file_name} does not exist!"
 
-        controller_configs = suite.load_controller_config(default_controller=controller)
+        # controller_configs = suite.load_composite_controller_config(default_controller=controller)
 
         problem_info = BDDLUtils.get_problem_info(bddl_file_name)
         # Check if we're using a multi-armed environment and use env_configuration argument if so
@@ -53,10 +53,11 @@ class ControlEnv:
         self.problem_name = problem_info["problem_name"]
         self.domain_name = problem_info["domain_name"]
         self.language_instruction = problem_info["language_instruction"]
+
         self.env = TASK_MAPPING[self.problem_name](
             bddl_file_name,
             robots=robots,
-            controller_configs=controller_configs,
+            controller_configs=None,
             gripper_types=gripper_types,
             initialization_noise=initialization_noise,
             use_camera_obs=use_camera_obs,
@@ -131,7 +132,7 @@ class ControlEnv:
         self.env.reset_from_xml_string(xml_string)
 
     def seed(self, seed):
-        self.env.seed(seed)
+        self.env.set_seed(seed)
 
     def set_init_state(self, init_state):
         return self.regenerate_obs_from_state(init_state)
