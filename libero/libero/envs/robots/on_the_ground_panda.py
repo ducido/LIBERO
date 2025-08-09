@@ -20,12 +20,12 @@ class OnTheGroundPanda(ManipulatorModel):
         )
 
     @property
-    def default_mount(self):
-        return None
+    def default_base(self):
+        return "RethinkMount"
 
     @property
     def default_gripper(self):
-        return "PandaGripper"
+        return {"right": "PandaGripper"}
 
     @property
     def default_controller_config(self):
