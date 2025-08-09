@@ -204,6 +204,26 @@ class SegmentationRenderEnv(OffScreenRenderEnv):
         }
         return obs
 
+    def regenerate_obs_from_state(self, mujoco_state):
+        self.set_state(mujoco_state)
+        self.env.sim.forward()
+        self.check_success()
+        self._post_process()
+        self._update_observables(force=True)
+
+        for i, instance_name in enumerate(list(self.env.model.instances_to_ids.keys())):
+            if instance_name == "Panda0":
+                self.segmentation_robot_id = i
+
+        for i, instance_name in enumerate(list(self.env.model.instances_to_ids.keys())):
+            if instance_name not in ["Panda0", "RethinkMount0", "PandaGripper0"]:
+                self.segmentation_id_mapping[i] = instance_name
+
+        self.instance_to_id = {
+            v: k + 1 for k, v in self.segmentation_id_mapping.items()
+        }
+        return self.env._get_observations()
+
     def get_segmentation_instances(self, segmentation_image):
         # get all instances' segmentation separately
         seg_img_dict = {}
